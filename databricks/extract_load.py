@@ -1,5 +1,5 @@
 import json
-import os
+import sys
 
 import requests
 from azure.identity import DefaultAzureCredential
@@ -56,9 +56,10 @@ storage_account_name = "learning11778653"
 account_url = f"https://{storage_account_name}.dfs.core.windows.net"
 credential = DefaultAzureCredential()
 
-connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-if not connection_string:
-    raise ValueError("AZURE_STORAGE_CONNECTION_STRING is not set.")
+if len(sys.argv) > 1:
+    connection_string = sys.argv[1]
+else:
+    raise ValueError("Connection string parameter is missing.")
 
 service_client = DataLakeServiceClient.from_connection_string(connection_string)
 file_system_client = service_client.get_file_system_client("weather-data")
