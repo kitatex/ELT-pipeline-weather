@@ -1,11 +1,11 @@
 import json
+import os
 
 import requests
 from azure.identity import DefaultAzureCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 
 # Open-Meteo API (Extract)
-
 DESTINATIONS = {
     "kahlenberg": (48.276342, 16.333068),
     "donaustadtbruecke": (48.210022, 16.436158),
@@ -56,12 +56,11 @@ storage_account_name = "learning11778653"
 account_url = f"https://{storage_account_name}.dfs.core.windows.net"
 credential = DefaultAzureCredential()
 
+connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+if not connection_string:
+    raise ValueError("AZURE_STORAGE_CONNECTION_STRING is not set.")
 
-service_client = DataLakeServiceClient(
-    account_url=account_url,
-    credential=credential,
-)
-
+service_client = DataLakeServiceClient.from_connection_string(connection_string)
 file_system_client = service_client.get_file_system_client("weather-data")
 
 
