@@ -1,5 +1,5 @@
 import json
-import sys
+from databricks.sdk.runtime import dbutils
 
 import requests
 from azure.identity import DefaultAzureCredential
@@ -56,10 +56,9 @@ storage_account_name = "learning11778653"
 account_url = f"https://{storage_account_name}.dfs.core.windows.net"
 credential = DefaultAzureCredential()
 
-if len(sys.argv) > 1:
-    connection_string = sys.argv[1]
-else:
-    raise ValueError("Connection string parameter is missing.")
+connection_string = dbutils.secrets.get(
+    scope="weather-pipeline", key="azure-connection-string"
+)
 
 service_client = DataLakeServiceClient.from_connection_string(connection_string)
 file_system_client = service_client.get_file_system_client("weather-data")
